@@ -17,7 +17,7 @@ const LoadingIndicator = ({loading}) => (
 class CriptoCurrency extends Component {
     render() {
         return (
-            <Text>Hello {this.props.name}!</Text>
+            <Text>{this.props.criptoCurrency.symbol} | {this.props.criptoCurrency.name}</Text>
         );
     }
 }
@@ -39,41 +39,34 @@ export default class App extends Component {
     };
 
     componentWillMount() {
-        this._getCriptoCurrenciesRequest(1)
+        this._getCriptoCurrencies(1)
     };
 
-    _getCriptoCurrenciesRequest() {
-        const pagination = {...this.state.pagination, pageLoading: true};
-        this._updateInfo(pagination, this.state.criptoCurrencies);
-    }
-
     _getCriptoCurrencies(page) {
-        this._getCriptoCurrenciesRequest();
+        const pagination = { ...this.state.pagination, pageLoading: true, page: page };
+        this._updateState(this.state.criptoCurrencies, pagination);
 
         API._getCriptoCurrencies(page)
             .then(result => {
-                this.state.pagination.pageLoading = false;
-                // if (result.length === 0) {
-                //     this.state.pagination.lastPage = true;
-                // }
+                const pagination = { ...this.state.pagination, pageLoading: false };
                 const criptoCurrencies = this.state.pagination.page === 1 ? result : [...this.state.criptoCurrencies, ...result];
-
-                this._updateInfo(criptoCurrencies)
+                this._updateState(criptoCurrencies, pagination)
             })
             .catch(error => {
-                this.state.pagination.pageLoading = true; // ????
-                this._updateInfo(this.state.criptoCurrencies);
+                const pagination = { ...this.state.pagination, pageLoading: true };
+                this._updateState(this.state.criptoCurrencies, pagination);
                 console.error(error)
             })
     }
 
-    _updateInfo(criptoCurrencies) {
+    _updateState(criptoCurrencies, pagination) {
         const loading = {
             type: 'Loading',
-            loading: this.state.pagination.pageLoading
+            loading: pagination.pageLoading
         };
 
         this.setState({
+            pagination: pagination,
             criptoCurrencies: criptoCurrencies,
             ds: this.state.ds.cloneWithRows([...criptoCurrencies, loading])
         })
@@ -85,7 +78,10 @@ export default class App extends Component {
         } else {
             return (
                 <View style={styles.row}>
-                    <Text style={styles.title}>{row.name}</Text>
+                    <Text>{row.symbol} | {row.name}</Text>
+                    <Text>$ {row.price_usd}</Text>
+                    <Text>24h: {row.percent_change_24h}</Text>
+                    <Text>7d: {row.percent_change_7d}</Text>
                     {/*<Text style={ styles.desc }>{ row.description }</Text>*/}
                 </View>
             )
@@ -102,9 +98,9 @@ export default class App extends Component {
         // const {page, perPage, pageCount, totalCount} = pagination;
         // const lastPage = totalCount <= (page - 1) * perPage + pageCount;
 
-        // if (!pagination.loading && !this.state.pagination.lastPage) {
-        //     this._getCriptoCurrencies(page + 1)
-        // }
+        if (!this.state.pagination.pageLoading && !this.state.pagination.lastPage) {
+            this._getCriptoCurrencies(this.state.pagination.page + 1);
+        }
     }
 
 
@@ -123,6 +119,7 @@ export default class App extends Component {
                     />
                 }
                 onEndReached={() => this._onEndReached()}
+                onEndReachedThreshold={10}
             />
         )
     }
