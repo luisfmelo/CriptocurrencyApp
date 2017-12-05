@@ -1,6 +1,46 @@
 # CriptocurrencyApp
 ## ReactNative simple App
 
+## Notes
+
+Packages prod: (npm i --save) 
+- **redux** 
+- **react-redux**: glue redux - react
+- **redux-thunk**: Redux thunk let’s us to return a function inside an action instead returning a object.
+- **redux-promise**: Allows us to resolve async actions (promises) with Redux. Example: Fetching data from an API.
+
+Packages Dev: (npm i --save-dev)
+- **remote-redux-devtools**: These are Redux debugging middleware, allows us to use the Redux Chrome Devtools in Remote mode.
+- **remotedev-rn-debugger**: These are Redux debugging middleware, allows us to use the Redux Chrome Devtools in Remote mode.
+- **remote-redux-devtools**: These are Redux debugging middleware, allows us to use the Redux Chrome Devtools in Remote mode.
+- **redux-logger**: logs the previous state, action and the next state in the console - must be the last middleware in chain
+
+
+## Store.js Explained:
+
+- **Platform**: detects the platform in which the app is running. Good to use platform specific components
+- **createStore**: initial state of the store. Accepts reducer; preloaded state; enhancer
+- **compose()**: Composes functions from right to left.
+- **Provider**: The Provider accepts one argument — which is our store. The Provider role is to glue React and Redux together.
+
+## More Notes:
+- Reducers are assync by default
+- All Reducers are invoked after a function
+- **connect**: receives 2 args
+    - **mapStateToProps**: Does exactly what it’s called after. Maps the Redux state to our React props. We can access the crypto state under this.props.crypto
+    - **mapDispatchToAction**: We will get there in the next chapter.
+- fetch data from api: [axios vs fetch(from redux)](https://medium.com/@thejasonfile/fetch-vs-axios-js-for-making-http-requests-2b261cdd3af5)
+- why **Thunk**?
+   - better error handling
+   
+# Doing Reducer Stuff
+- We need:
+    - State for data being fetched so we can show a spinner.
+    - The state that holds the actual data from the request.
+    - Error handling — do we have an error and if so what does it say?
+
+## Notes about React
+
 This project was bootstrapped with [Create React Native App](https://github.com/react-community/create-react-native-app).
 
 Below you'll find information about performing common tasks. The most recent version of this guide is available [here](https://github.com/react-community/create-react-native-app/blob/master/react-native-scripts/template/README.md).
