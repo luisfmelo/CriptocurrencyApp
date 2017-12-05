@@ -1,0 +1,2 @@
+# CriptocurrencyApp
+ReactNative simple App
